@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mapa Publicidade</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.2/leaflet.css" />
+	<link rel="stylesheet" href="MarkerCluster.css" />
+  <link rel="stylesheet" href="MarkerCluster.Default.css" />
+
+ 
+
+  <script src="http://cdn.leafletjs.com/leaflet-0.6.2/leaflet.js"></script>    
+  <script src="survey.js"></script>
+  <script src="leaflet.markercluster-src.js"></script>
+
+
+  <style>
+#map {
+
+    width: 100%;
+    height:600px;
+}
+
+  
+  </style>
+ 
+ 
+  
+
+
+    
+</head>
+<body>
+ 
+  
+
+  <div id="map"></div>
+  
+  
+
+  <script>
+
+
+
+  var map = L.map('map').setView([41.51533360600007, -7.991251320999936, ], 11.4);
+
+  L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png').addTo(map);
+
+
+  var Ortofotomapa= L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{ attribution:'<a href="https://www.esri.com/en-us/home"</a>©️ESRI_Imaginary' })
+    .addTo(map); 
+  var OpenStreet = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {attribution:'<a href="https://www.openstreetmap.org/#map=17/-21.00148/-44.99806"</a>©️OpenStreetMap'});
+
+
+
+/////Mapa de Cluster
+  var markers = L.markerClusterGroup();
+	var survey = L.geoJson(points, {
+		onEachFeature: function (feature, layer) 
+			{
+      var attributes= feature.properties;
+			layer.bindPopup("<h3>Nome</h3>"+attributes.nome_+"<h3>Tipologia</h3>"+attributes.tipologia+"<h3>Coordenadas</h3><h5>Latitude: "+attributes.Lat+"<br>Longitude: "+attributes.Lon+"</h5>"+"<h3>Fotografia:<img src="+attributes.RelPath+" width=250px height=250px></h3>");
+			}
+		});
+	markers.addLayer(survey); 
+	map.addLayer(markers);		
+    map.fitBounds(markers.getBounds()); 
+
+
+    var baseMaps = {
+
+    "Ortofotomapa":Ortofotomapa,
+    "Openstreet":OpenStreet,
+ 
+};
+
+    var overlayMaps = {
+    "Publicidade":markers,
+   
+
+  };
+  L.control.layers(baseMaps, overlayMaps).addTo(map);
+
+
+  L.tileLayer('http://tile.cloudmade.com/[API-KEY]/29889/256/{z}/{x}/{y}.png', {
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
+    maxZoom: 18
+  }).addTo(map);
+
+
+
+  L.control.scale({imperial: false}).addTo(map);
+
+  
+
+  </script>
+
+ </body>
+</html>
